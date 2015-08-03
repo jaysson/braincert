@@ -14,18 +14,33 @@ describe Braincert::LiveClass do
   end
   
   describe 'when created' do
-    it 'is not valid' do ; Braincert::LiveClass.new.should_not be_valid ; end
-    it 'is valid with valid attributes' do ; Braincert::LiveClass.new(@valid_attributes).should be_valid ; end
+    it 'is not valid' do
+      expect(Braincert::LiveClass.new).to_not be_valid
+    end
+    it 'is valid with valid attributes' do
+      expect(Braincert::LiveClass.new(@valid_attributes)).to be_valid
+    end
   end
-  describe 'setting timezone' do
+  describe 'setting times' do
     subject do
-      c = Braincert::LiveClass.new
+      c = Braincert::LiveClass.new(:title => 'Test')
       c.start_time_with_zone = Time.utc(2015,8,3,18,15,0).in_time_zone('Hawaii')
+      c.duration = 3600         # seconds
       c
     end
     its(:start_time) { should eq '08:15AM' }
+    its(:end_time)   { should eq '09:15AM' }
     its(:date) { should eq '2015-08-03' }
     its(:timezone) { should eq '32' }
+    it { should be_valid }
+  end
+  describe 'serializing to JSON' do
+    it 'serializes' do
+      @c = Braincert::LiveClass.new(:title => 'x')
+      @c.start_time_with_zone = Time.utc(2015,8,3,15,0).in_time_zone('Edinburgh')
+      @c.duration = 3600
+      expect(@c.to_json).to eq "{\"title\":\"x\",\"timezone\":\"28\",\"start_time\":\"04:00PM\",\"end_time\":\"05:00PM\",\"end_classes_count\":1,\"date\":\"2015-08-03\",\"seat_attendees\":25,\"record\":1,\"format\":\"json\"}"
+    end
   end
   describe 'CRUD' do
     before(:all) do
