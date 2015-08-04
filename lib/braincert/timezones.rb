@@ -5,7 +5,7 @@ module Braincert
     #  https://www.braincert.com/developer/virtualclassroom-api
 
     ZONES = {}
-    ZONE_CODES = []
+    ZONE_CODES = {}
     
     private
 
@@ -101,12 +101,19 @@ module Braincert
 ]
     end
     
+    # We maintain two mappings. The first maps an IANA timezone name (eg "Midway Island") to
+    # Braincert's zone code, eg "Midway Island" => "58".
+    # The second maps their zone code to _one_ IANA name, eg "58" => "Midway Island".  The second
+    # mapping loses information, but we have no choice because once a class has been created, Braincert
+    # only preserves the zone code and a *nonstandard* name for the zone, so the only way to recover
+    # the zone info is by mapping the zone code to *some* standard IANA name.  Yuck.
+    
     self.timezone_list.split(/\n/).each do |entry|
       next unless entry =~ /\s*(\d+)=>\(\S+\)\s+(.*)/
       code = $1
       $2.split(/,\s*/).each do |place|
         ZONES[place] = code
-        ZONE_CODES << code
+        ZONE_CODES[code] ||= place
       end
     end
 

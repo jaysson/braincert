@@ -1,4 +1,5 @@
 require 'httparty'
+require 'net_http_exception_fix'
 
 module Braincert
   module Request
@@ -10,7 +11,7 @@ module Braincert
 
     protected
     
-    # Return response body if success.  If HTTP exception, API error,
+    # Return parsed response body (ie as a hash) if success.  If HTTP exception, API error,
     #  or error return status, return nil but add the error info
     #  to the model's errors object.
     def do_request(endpoint, args={})
@@ -24,7 +25,7 @@ module Braincert
           (body['status'] == 'error' || body['Status'] == 'error')
         # otherwise success: return parsed body as JSON
         return body
-      rescue RuntimeError => e
+      rescue RuntimeError, Net::HTTPBroken => e
         self.errors.add(:connection, e.message)
         return nil
       end

@@ -23,7 +23,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock"
   spec.add_development_dependency "activemodel", "~> 3.2.0"
 
-  spec.add_dependency "faraday"
+  spec.add_dependency "httparty"
   spec.add_dependency "json"
   spec.add_dependency "activesupport", "~> 3.2.0"
+  spec.add_dependency "net_http_exception_fix"   # conflates >40 different HTTP errors into one exception class
 end
