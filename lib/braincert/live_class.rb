@@ -17,6 +17,8 @@ module Braincert
     include Braincert::Request
     include Braincert::MethodWrappers
     
+    class SaveError < RuntimeError ; end
+
     # Public attributes auto-assigned by API after creation
     attr_accessor :id, :user_id
     
@@ -61,7 +63,7 @@ module Braincert
       :ispaid => 0,             # not paid (from Braincert point of view)
       :currency => 'USD',
       :is_recurring => 0,
-      :repeat => Braincert::REPEAT_WEEKLY,
+      :repeat => nil,
       :end_classes_count => 1,
       :seat_attendees => 2,     # free-plan limit
       :record => 1,             # 0=don't record
@@ -77,6 +79,11 @@ module Braincert
 
     def recurring? ; is_recurring.to_i > 0 ; end
 
+    def repeat=(val)
+      @repeat = val
+      @is_recurring = (@repeat ? 1 : 0)
+    end
+    
     def start_time_with_zone=(time_with_zone)
       zone_name = time_with_zone.time_zone.name
       @localtime = time_with_zone.in_time_zone(zone_name)

@@ -1,20 +1,9 @@
 require 'spec_helper'
 
-module BraincertRequestHelpers 
-  def regexp_for(action)
-    Regexp.new "\\A#{@site}/#{action}\\?"
-  end
-  def fixture(file)
-    {:status => 200, :body => IO.read("spec/fixtures/#{file}.json")}
-  end
-end
-
 describe 'request' do
-  include BraincertRequestHelpers
+  include BraincertRequestHelpers # sets a mocked sitename in STUB_SITE
   before do
-    @site = 'http://example.com'
-    Braincert::Request.api_key = 'apiXYZ'
-    Braincert::Request.site = @site
+    Braincert.api_key = 'apiXYZ'
   end
   describe 'creating' do
     before(:each) do
@@ -39,6 +28,10 @@ describe 'request' do
       WebMock.stub_request(:post, regexp_for('schedule')).to_raise Errno::ECONNRESET
       expect(@c.save).to be_nil
       expect(@c.errors[:connection].first).to match /Connection reset/
+    end
+    specify 'with HTTP errors using save!' do
+      WebMock.stub_request(:post, regexp_for('schedule')).to_raise Errno::ECONNRESET
+      expect { @c.save! }.to raise_error(Braincert::LiveClass::SaveError)
     end
     specify 'with invalid API key' do
       WebMock.stub_request(:post, regexp_for('schedule')).to_return fixture('error_invalid_api_key')

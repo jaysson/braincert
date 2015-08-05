@@ -8,6 +8,20 @@ module Braincert
       # attributes returned by certain API calls that we don't model at all
       UNUSED_API_ATTRIBUTES = %w(status description published label privacy)
 
+      def find(id)
+        dummy = Braincert::LiveClass.new
+        if (result_list = dummy.do_request('getclass', :class_id => id))
+          Braincert::LiveClass.new(Braincert::LiveClass.from_attributes(result_list.first))
+        end
+      end
+
+      def all
+        if (json = self.do_request('listclass'))
+          # success means we have an array of hashes.  Each one has "id" key which is class ID,
+          # but also has some attributes that aren't modeled on our side: 
+        end
+      end
+
       # convert attributes retrieved from API call to attributes suitable for calling constructor
       def from_attributes(a)
         # recover the zone info
@@ -29,7 +43,7 @@ module Braincert
       end
     end      
 
-    # API wrapper methods
+    # API instance methods
 
 
     # Save a created course. Freezes the local copy since the API does not support modifying.
@@ -45,18 +59,8 @@ module Braincert
       end
     end
 
-    def find(id)
-      if (json = self.do_request('getclass', :class_id => id))
-        klass = Braincert::LiveClass.new.from_json
-        debugger
-      end
-    end
-
-    def all
-      if (json = self.do_request('listclass'))
-        # success means we have an array of hashes.  Each one has "id" key which is class ID,
-        # but also has some attributes that aren't modeled on our side: 
-      end
+    def save!
+      save or raise Braincert::LiveClass::SaveError, self.errors.full_messages.join(', ')
     end
 
     # serialize to JSON for creation
