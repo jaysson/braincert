@@ -30,8 +30,7 @@ Braincert.api_key = 'xxx'
 classes = Braincert::LiveClass.all
 # Or get details about a particular course by id:
 one_class = Braincert::LiveClass.find(classes.first.id)
-# Returns nil and populates one_class.errors (ActiveModel errors object) 
-# if failure
+# Returns nil and populates one_class.errors (ActiveModel errors object) if fail
 ```
 
 Because the API doesn't support updating a class in place (you have to
@@ -53,13 +52,17 @@ for optional attributes.
 ```
 new_class = Braincert::LiveClass.new
 new_class.title = 'New Test Class'
+
 new_class.start_time_with_zone = Time.zone.parse("Aug 05, 5:00pm")
 # must be ActiveSupport::TimeWithZone instance (ie, responds to :time_zone)
+
 new_class.duration = 3600        # in seconds
 new_class.seat_attendees = 25    # max attendees including teacher
+
 # optional for recurring classes:
 new_class.repeat = Braincert::REPEAT_WEEKLY  # see doc for other values
 new_class.end_classes_count = 3  # 3rd meeting is the final one
+
 # nonrecurring classes (default)
 new_class.repeat = nil
 
