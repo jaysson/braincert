@@ -30,6 +30,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "httparty"
   spec.add_dependency "json", "~> 1.8.0"
-  spec.add_dependency "activesupport", "~> 3.2.0"
+  spec.add_dependency "activesupport", "3.2.19"
   spec.add_dependency "net_http_exception_fix"   # conflates >40 different HTTP errors into one exception class
 end
