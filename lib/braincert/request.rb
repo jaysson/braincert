@@ -1,5 +1,6 @@
 require 'httparty'
 require 'net_http_exception_fix'
+require 'active_model'
 
 module Braincert
 
@@ -13,6 +14,13 @@ module Braincert
 
 
   module Request
+    extend ActiveSupport::Concern # needed since Serializers module expects to use class_method
+    include ActiveModel::Conversion
+    include ActiveModel::Serializers::JSON
+
+    def self.included(base)
+      base.include_root_in_json = false # don't put klass name as toplevel JSON slot
+    end
 
     # Return parsed response body (ie as a hash) if success.  If HTTP exception, API error,
     #  or error return status, return nil but add the error info

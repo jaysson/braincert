@@ -11,8 +11,6 @@ module Braincert
     require_relative 'timezones'
 
     include ActiveModel::Validations
-    include ActiveModel::Serializers::JSON
-    include ActiveModel::Conversion
 
     include Braincert::Request
     include Braincert::MethodWrappers

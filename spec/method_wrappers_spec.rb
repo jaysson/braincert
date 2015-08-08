@@ -10,13 +10,13 @@ describe 'API method wrapper' do
   end
   describe 'serializing' do
     specify 'single class meeting' do
-      expect(@c.to_json).to eq "{\"title\":\"Test class\",\"timezone\":\"28\",\"start_time\":\"04:00PM\",\"end_time\":\"05:00PM\",\"date\":\"2015-08-03\",\"seat_attendees\":2,\"record\":1,\"format\":\"json\"}"
+      expect(@c.to_json).to be_json_eql('{"title":"Test class","timezone":"28","start_time":"04:00PM","end_time":"05:00PM","date":"2015-08-03","seat_attendees":2,"record":1,"format":"json"}')
     end
     specify 'recurring meetings' do
       @c.is_recurring = 1
       @c.repeat = Braincert::REPEAT_WEEKLY
       @c.end_classes_count = 3
-      expect(@c.to_json).to eq "{\"title\":\"Test class\",\"timezone\":\"28\",\"start_time\":\"04:00PM\",\"end_time\":\"05:00PM\",\"date\":\"2015-08-03\",\"seat_attendees\":2,\"record\":1,\"format\":\"json\",\"is_recurring\":1,\"repeat\":4,\"end_classes_count\":3}"
+      expect(@c.to_json).to be_json_eql('{"title":"Test class","timezone":"28","start_time":"04:00PM","end_time":"05:00PM","date":"2015-08-03","seat_attendees":2,"record":1,"format":"json","is_recurring":1,"repeat":4,"end_classes_count":3}')
     end
     describe 'recovers timezone info' do
       subject do

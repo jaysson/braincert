@@ -1,5 +1,5 @@
-require 'its'
-require 'debugger'
+require 'rspec/its'
+require 'json_spec'
 require 'webmock'
 require 'active_support/all'
 require 'simplecov'
@@ -11,4 +11,5 @@ Dir[File.join(File.dirname(__FILE__), '..', 'spec/support', '*.rb')].each { |f| 
 RSpec.configure do |config|
   config.before(:suite) { WebMock.enable!  }
   config.after(:suite)  { WebMock.disable! }
+  config.include JsonSpec::Helpers
 end
